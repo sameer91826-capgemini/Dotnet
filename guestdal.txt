@@ -1,0 +1,110 @@
+namespace Capgemini.Guest.DataAccessLayer
+{
+    public class GuestDAL
+    {
+        sqlpracticeEntities entities = new sqlpracticeEntities();
+
+        public bool UpdateGuestDAL(GUEST guestupd)
+        {
+            bool guestupdated = false;
+            GUEST guest = entities.GUESTs.Where(x => x.GuestID == guestupd.GuestID).
+                Select(x => x).FirstOrDefault();
+            if(guest!=null)
+            {
+                guest.GuestName = guestupd.GuestName;
+                guest.GuestContactNumber = guestupd.GuestContactNumber;
+
+                int status = entities.SaveChanges();
+                if(status>0)
+                {
+                    guestupdated = true;
+
+                }
+            }
+            return guestupdated;
+        }
+
+        public bool DeleteGuestDAL(int guestID)
+        {
+            bool guestDeleted = false;
+            try
+            {
+                GUEST guest = entities.GUESTs.Where(x => x.GuestID == guestID).Select(x => x).FirstOrDefault();
+                if (guest != null)
+                {
+                    entities.GUESTs.Remove(guest);
+                    int status = entities.SaveChanges();
+                    if (status > 0)
+                    {
+                        guestDeleted = true;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+            return guestDeleted;
+        }
+
+        public GUEST SearchGuestDAL(int guestID)
+        {
+            GUEST searchedGuest = null;
+            try
+            {
+                GUEST guest = entities.GUESTs.Where(x => x.GuestID == guestID).Select(x => x).FirstOrDefault();
+                if (guest != null)
+                {
+                    searchedGuest = guest;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new GuestException(ex.Message);
+            }
+            return searchedGuest;
+        }
+
+        public bool AddGuestDAL(GUEST guest)
+        {
+            bool guestAdded = false;
+            try
+            {
+                entities.GUESTs.Add(guest);
+                int status = entities.SaveChanges();
+
+                if (status > 0)
+                {
+                    guestAdded = true;
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new GuestException(ex.Message);
+            }
+            return guestAdded;
+        }
+
+        public List<GUEST> GetAllGuestDAL()
+        {
+            List<GUEST> guestList = null;
+
+            try
+            {
+                guestList = entities.GUESTs.ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw new GuestException(ex.Message);
+            }
+            return guestList;
+
+        }
+    }
+}
